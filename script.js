@@ -41,8 +41,8 @@ async function init() {
         model = await tmPose.load(modelURL, metadataURL);
         maxPredictions = model.getTotalClasses();
 
-        const width = 200;
-        const height = 200;
+        const width = 600;
+        const height = 600;
         const flip = true;
         webcam = new tmPose.Webcam(width, height, flip);
         await webcam.setup();
@@ -202,8 +202,8 @@ async function playInstructionVideo() {
     videoCanvas.style.position = 'absolute';
     videoCanvas.style.left = '0';
     videoCanvas.style.top = '0';
-    videoCanvas.width = 600;
-    videoCanvas.height = 450;
+    videoCanvas.width = 200;
+    videoCanvas.height = 200;
 
     videoContainer.style.position = 'relative';
     videoContainer.appendChild(videoCanvas);
