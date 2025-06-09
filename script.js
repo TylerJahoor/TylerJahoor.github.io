@@ -73,7 +73,7 @@ async function predict() {
                     stamps[i][j]="✅";
                     document.getElementById("bricked").style.opacity=1;
                     const newSound = new Audio("bell.mp3");
-                    newSound.volume = 2;
+                    newSound.volume = 1;
                     newSound.play();
                 }
             }
