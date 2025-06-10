@@ -1,10 +1,12 @@
-
 html, body {
   height: 100%;
   width: 100%;
   margin: 0;
   padding: 0;
-  font-family: Arial, sans-serif;
+  /*font-family: Arial, sans-serif;*/
+  font-family: "Splash", cursive;
+  font-weight: 400;
+  font-style: normal;
   cursor:crosshair;
   background-image:url("https://media.tenor.com/6CMUVBh0H-cAAAAM/chips-potato-chips.gif");
   color:#FFFFFF;
@@ -77,6 +79,9 @@ button {
   border: none;
   border-radius: 4px;
   display: block;
+  font-family: "Splash", cursive;
+  font-weight: 400;
+  font-style: normal;
 }
 
 canvas {
