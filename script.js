@@ -17,8 +17,10 @@ function tolerate(){
 }
 let buffer=0.5;
 function buff(){
-    buffer=document.getElementById("buffer").value;
+    buffer=Number(document.getElementById("buffer").value);
 }
+let statsPluh=[2,[0,255,255]];
+let sigma=[];
 
 
 async function init() {
@@ -62,6 +64,13 @@ async function predict() {
     // Prediction 2: run input through teachable machine classification model
     const prediction = await model.predict(posenetOutput);
 
+    document.getElementById("bricked").style.opacity-=0.1;
+    let modif=0.5;
+    statsPluh[0]=((statsPluh[0]-2)*modif)+2;
+    statsPluh[1][0]=statsPluh[1][0]*modif;
+    statsPluh[1][1]=((statsPluh[1][1]-255)*modif)+255;
+    statsPluh[1][2]=((statsPluh[1][2]-255)*modif)+255;
+
     for(let i = 0; i < maxPredictions; i++) {
         const classPrediction = prediction[i].className + ": " + prediction[i].probability.toFixed(2);
         //labelContainer.childNodes[i].innerHTML = classPrediction;
@@ -69,12 +78,13 @@ async function predict() {
             labelContainer.childNodes[i].innerHTML = classPrediction+"🤑"+stamps[i];
 
             for(let j=0;j<stamps[i].length;j++){
-                if(document.getElementById("instructionVideo").currentTime -buffer < stamps[i][j] && stamps[i][j] < document.getElementById("instructionVideo").currentTime +buffer){
+                if(document.getElementById("instructionVideo").currentTime -buffer <= stamps[i][j] && stamps[i][j] <= document.getElementById("instructionVideo").currentTime +buffer){
                     stamps[i][j]="✅";
                     document.getElementById("bricked").style.opacity=1;
                     const newSound = new Audio("bell.mp3");
                     newSound.volume = 1;
                     newSound.play();
+                    statsPluh=[6,[127.5,0,255]];
                 }
             }
         }
@@ -82,20 +92,31 @@ async function predict() {
             labelContainer.childNodes[i].innerHTML = classPrediction+"💀"+stamps[i];
         }
     }
-
-    document.getElementById("bricked").style.opacity-=0.1;
     // finally draw the poses
     drawPose(pose);
+
 }
 
 function drawPose(pose) {
     if (webcam.canvas) {
         ctx.drawImage(webcam.canvas, 0, 0);
-        // draw the keypoints and skeleton
         if (pose) {
             const minPartConfidence = 0.2;
-            tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
-            tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
+            statsPluh[2]="rgb("+statsPluh[1][0]+","+statsPluh[1][1]+","+statsPluh[1][2]+")";
+            //tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx, statsPluh[0]*1.5, statsPluh[2], statsPluh[2]);
+            //tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx, statsPluh[0], statsPluh[2]);
+            
+
+            sigma.unshift([pose.keypoints,minPartConfidence,ctx,statsPluh[0]*1.5,statsPluh[1]]);
+            for(let i=sigma.length-1;i>=0;i--){
+                tmPose.drawKeypoints(sigma[i][0], sigma[i][1], sigma[i][2], sigma[i][3], "rgba("+sigma[i][4][0]+","+sigma[i][4][1]+","+sigma[i][4][2]+","+i**-1+")", "rgba("+sigma[i][4][0]+","+sigma[i][4][1]+","+sigma[i][4][2]+","+i**-1+")");
+                tmPose.drawSkeleton(sigma[i][0], sigma[i][1], sigma[i][2], sigma[i][3], "rgba("+sigma[i][4][0]+","+sigma[i][4][1]+","+sigma[i][4][2]+","+i**-1+")");
+            }
+            if(sigma.length>10){
+                sigma.pop();
+            }
+
+
         }
     }
 }
@@ -159,6 +180,7 @@ function stopInstructionVideo() {
     if (canvas) {
         canvas.remove();
     }
+    reset();
 }
 
 function stopWebcam() {
