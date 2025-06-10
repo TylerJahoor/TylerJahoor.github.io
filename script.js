@@ -84,7 +84,7 @@ async function predict() {
                     const newSound = new Audio("bell.mp3");
                     newSound.volume = 1;
                     newSound.play();
-                    statsPluh=[6,[127.5,0,255]];
+                    statsPluh=[8,[127.5,0,255]];
                 }
             }
         }
@@ -107,13 +107,13 @@ function drawPose(pose) {
             //tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx, statsPluh[0], statsPluh[2]);
             
 
-            sigma.unshift([pose.keypoints,minPartConfidence,ctx,statsPluh[0]*1.5,statsPluh[1]]);
-            for(let i=sigma.length-1;i>=0;i--){
-                tmPose.drawKeypoints(sigma[i][0], sigma[i][1], sigma[i][2], sigma[i][3], "rgba("+sigma[i][4][0]+","+sigma[i][4][1]+","+sigma[i][4][2]+","+i**-1+")", "rgba("+sigma[i][4][0]+","+sigma[i][4][1]+","+sigma[i][4][2]+","+i**-1+")");
-                tmPose.drawSkeleton(sigma[i][0], sigma[i][1], sigma[i][2], sigma[i][3], "rgba("+sigma[i][4][0]+","+sigma[i][4][1]+","+sigma[i][4][2]+","+i**-1+")");
+            sigma.push([pose.keypoints,minPartConfidence,ctx,statsPluh[0]*1.5,statsPluh[1]]);
+            for(let i=0;i<sigma.length;i++){
+                tmPose.drawKeypoints(sigma[i][0], sigma[i][1], sigma[i][2], sigma[i][3], "rgba("+sigma[i][4][0]+","+sigma[i][4][1]+","+sigma[i][4][2]+","+ (i/10) +")", "rgba("+sigma[i][4][0]+","+sigma[i][4][1]+","+sigma[i][4][2]+","+ (i/10) +")");
+                tmPose.drawSkeleton(sigma[i][0], sigma[i][1], sigma[i][2], sigma[i][3], "rgba("+sigma[i][4][0]+","+sigma[i][4][1]+","+sigma[i][4][2]+","+ (i/10) +")");
             }
             if(sigma.length>10){
-                sigma.pop();
+                sigma.shift();
             }
 
 
